@@ -1,0 +1,28 @@
+title: Suspicious Windows Command Shell Execution
+id: 4b7f2a91-63e5-4c8d-b127-91e6f5a4d832
+status: experimental
+description: Detects suspicious command shell execution involving common reconnaissance or system discovery commands.
+author: Detection Engineering Project
+date: 2026-08-22
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith:
+            - '\cmd.exe'
+        CommandLine|contains:
+            - 'whoami'
+            - 'ipconfig'
+            - 'systeminfo'
+            - 'net user'
+            - 'net group'
+    condition: selection
+falsepositives:
+    - Legitimate administrative activity
+    - Troubleshooting and system diagnostics
+level: medium
+tags:
+    - attack.execution
+    - attack.t1059.003
+    - attack.discovery
