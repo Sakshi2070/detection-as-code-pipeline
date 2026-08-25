@@ -1,0 +1,6 @@
+{
+  "Image": "C:\\Windows\\System32\\schtasks.exe",
+  "CommandLine": "schtasks.exe /create /tn UpdateTask /tr C:\\Temp\\update.exe /sc ONLOGON",
+  "User": "testuser",
+  "ParentImage": "C:\\Windows\\System32\\cmd.exe"
+}

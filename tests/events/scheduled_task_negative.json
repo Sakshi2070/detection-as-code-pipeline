@@ -1,0 +1,6 @@
+{
+  "Image": "C:\\Windows\\System32\\schtasks.exe",
+  "CommandLine": "schtasks.exe /query",
+  "User": "testuser",
+  "ParentImage": "C:\\Windows\\explorer.exe"
+}

@@ -1,0 +1,7 @@
+{
+
+  "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "CommandLine": "powershell.exe -EncodedCommand SQBFAFgA",
+  "User": "testuser",
+  "ParentImage": "C:\\Windows\\explorer.exe"
+}
