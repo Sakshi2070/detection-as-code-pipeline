@@ -5,6 +5,7 @@ on:
     paths:
       - 'rules/**'
       - 'tests/**'
+      - 'scripts/**'
       - 'requirements.txt'
       - '.github/workflows/sigma-validation.yml'
 
@@ -12,6 +13,7 @@ on:
     paths:
       - 'rules/**'
       - 'tests/**'
+      - 'scripts/**'
       - 'requirements.txt'
       - '.github/workflows/sigma-validation.yml'
 
@@ -45,7 +47,15 @@ jobs:
 
       - name: Run detection tests
         run: |
-          pytest -v tests/test_detections.py
+          pytest -v tests/test_detections.py 
+
+      - name: Run detection quality gate
+        run: |
+          python scripts/validate_detection_quality.py
+      
+      - name: Generate detection engineering report
+        run: |
+          python scripts/generate_report.py
 
       - name: Convert Sigma rules to Splunk
         run: |
@@ -60,4 +70,10 @@ jobs:
         with:
           name: splunk-detections
           path: output/
+          
+      - name: Upload detection engineering report
+        uses: actions/upload-artifact@v4
+        with:
+          name: detection-engineering-report
+          path: reports/detection_report.json
           

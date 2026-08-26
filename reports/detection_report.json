@@ -1,0 +1,13 @@
+{
+  "detection_rules": 3,
+  "attack_techniques": 3,
+  "attack_technique_ids": [
+    "T1053.005",
+    "T1059.001",
+    "T1059.003"
+  ],
+  "test_events": 6,
+  "tests_passed": 6,
+  "tests_status": "PASS",
+  "quality_gate": "PASS"
+}
