@@ -20,42 +20,50 @@ def load_event(filename):
 
 
 def matches_selection(selection, event):
-    for field, expected in selection.items():
+    """
+    Evaluate the subset of Sigma selection semantics
+    currently used by this project.
+
+    Multiple fields = AND
+    Multiple values in the same field = OR
+    """
+
+    for field, expected_values in selection.items():
 
         field_name, _, modifier = field.partition("|")
 
-        actual = event.get(field_name)
+        actual_value = event.get(field_name)
 
-        if actual is None:
+        if actual_value is None:
             return False
 
-        if not isinstance(expected, list):
-            expected = [expected]
+        if not isinstance(expected_values, list):
+            expected_values = [expected_values]
 
-        actual = str(actual).lower()
+        actual_value = str(actual_value).lower()
 
-        matched = False
+        field_matched = False
 
-        for value in expected:
-            value = str(value).lower()
+        for expected in expected_values:
+
+            expected = str(expected).lower()
 
             if modifier == "contains":
-                if value in actual:
-                    matched = True
+                if expected in actual_value:
+                    field_matched = True
+                    break
 
             elif modifier == "endswith":
-                if actual.endswith(value):
-                    matched = True
+                if actual_value.endswith(expected):
+                    field_matched = True
+                    break
 
-            elif "*" in value:
-                pattern = value.replace("*", "")
-                if pattern in actual:
-                    matched = True
+            elif modifier == "":
+                if actual_value == expected:
+                    field_matched = True
+                    break
 
-            elif actual == value:
-                matched = True
-
-        if not matched:
+        if not field_matched:
             return False
 
     return True
@@ -70,41 +78,80 @@ def evaluate_rule(rule_file, event_file):
     return matches_selection(selection, event)
 
 
-def test_powershell_positive():
+def test_powershell_encoded_positive():
     assert evaluate_rule(
         "windows_powershell_encoded_command.yml",
         "powershell_encoded_positive.json",
-    )
+    ), "PowerShell encoded command should be detected"
+
+def test_powershell_encoded_positive_pwsh():
+    assert evaluate_rule(
+        "windows_powershell_encoded_command.yml",
+        "powershell_encoded_positive_pwsh.json",
+    ), "PowerShell 7 encoded command should be detected"
 
 
-def test_powershell_negative():
+def test_powershell_encoded_positive_enc():
+    assert evaluate_rule(
+        "windows_powershell_encoded_command.yml",
+        "powershell_encoded_positive_enc.json",
+    ), "PowerShell abbreviated encoded command should be detected"
+
+
+def test_powershell_encoded_negative():
     assert not evaluate_rule(
         "windows_powershell_encoded_command.yml",
         "powershell_encoded_negative.json",
-    )
+    ), "Normal PowerShell execution should not trigger the detection"
 
 
-def test_cmd_positive():
+def test_suspicious_cmd_positive():
     assert evaluate_rule(
         "windows_suspicious_cmd_execution.yml",
         "suspicious_cmd_positive.json",
-    )
+    ), "Suspicious command execution should be detected"
+
+def test_suspicious_cmd_positive_systeminfo():
+    assert evaluate_rule(
+        "windows_suspicious_cmd_execution.yml",
+        "suspicious_cmd_positive_systeminfo.json",
+    ), "systeminfo execution should be detected"
 
 
-def test_cmd_negative():
+def test_suspicious_cmd_positive_net_user():
+    assert evaluate_rule(
+        "windows_suspicious_cmd_execution.yml",
+        "suspicious_cmd_positive_net_user.json",
+    ), "net user execution should be detected"
+
+
+def test_suspicious_cmd_negative():
     assert not evaluate_rule(
         "windows_suspicious_cmd_execution.yml",
         "suspicious_cmd_negative.json",
-    )
+    ), "Normal command execution should not trigger the detection"
+
+def test_suspicious_cmd_normal_negative_2():
+    assert not evaluate_rule(
+        "windows_suspicious_cmd_execution.yml",
+        "suspicious_cmd_normal_negative_2.json",
+    ), "Normal cmd execution should not trigger the detection"
+
 def test_scheduled_task_positive():
     assert evaluate_rule(
         "windows_scheduled_task_creation.yml",
         "scheduled_task_positive.json",
-    )
+    ), "Scheduled task creation should be detected"
 
 
 def test_scheduled_task_negative():
     assert not evaluate_rule(
         "windows_scheduled_task_creation.yml",
         "scheduled_task_negative.json",
-    )
+    ), "Scheduled task query should not trigger the creation detection"
+
+def test_powershell_normal_negative_2():
+    assert not evaluate_rule(
+        "windows_powershell_encoded_command.yml",
+        "powershell_normal_negative_2.json",
+    ), "Normal PowerShell command should not trigger the detection"

@@ -1,0 +1,6 @@
+{
+  "Image": "C:\\Windows\\System32\\cmd.exe",
+  "CommandLine": "cmd.exe /c systeminfo",
+  "User": "testuser",
+  "ParentImage": "C:\\Windows\\explorer.exe"
+}
