@@ -96,3 +96,15 @@ def test_cmd_negative():
         "windows_suspicious_cmd_execution.yml",
         "suspicious_cmd_negative.json",
     )
+def test_scheduled_task_positive():
+    assert evaluate_rule(
+        "windows_scheduled_task_creation.yml",
+        "scheduled_task_positive.json",
+    )
+
+
+def test_scheduled_task_negative():
+    assert not evaluate_rule(
+        "windows_scheduled_task_creation.yml",
+        "scheduled_task_negative.json",
+    )
