@@ -41,6 +41,10 @@ jobs:
         run: |
           sigma plugin install splunk
 
+      - name: Install Kusto backend
+        run: |
+         sigma plugin install kusto
+
       - name: Validate Sigma rules
         run: |
           sigma check rules/windows/*.yml
