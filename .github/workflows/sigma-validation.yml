@@ -69,12 +69,29 @@ jobs:
             sigma convert -t splunk -p splunk_windows "$rule" > "output/${filename}.spl"
           done
 
+      - name: Create Sentinel output directory
+        run: |
+          mkdir -p output/sentinel
+
+      - name: Convert Sigma rules to Microsoft Sentinel KQL
+        run: |
+          for rule in rules/windows/*.yml; do
+            filename=$(basename "$rule" .yml)
+            sigma convert -t kusto -p sentinel_asim "$rule" > "output/sentinel/${filename}.kql"
+          done
+
       - name: Upload Splunk detections
         uses: actions/upload-artifact@v4
         with:
           name: splunk-detections
           path: output/
-
+         
+      - name: Upload Sentinel KQL detections
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentinel-kql-detections
+          path: output/sentinel/
+          
       - name: Upload detection engineering report
         uses: actions/upload-artifact@v4
         with:
